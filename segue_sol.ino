@@ -2,6 +2,9 @@
 
 Servo parabola;
 Servo circulo;
+int LDRA = A0;
+int LDRB = A1;
+int entrada = 0; // variavel-> ta armazenando o valor do LDR1
 
 void setup()
 {
@@ -10,16 +13,24 @@ void setup()
   Serial.begin(9600);
   parabola.write(origem());
   circulo.write(origem());
+  pinMode(LDRA, INPUT);
+  pinMode(LDRB, INPUT);
 }
 
 void loop()
 {
-  nulo();
+  if (LDRA > LDRB) {
+    AB();
+    
+  } else if (LDRB > LDRA){
+    BA();
+    
+  }
   
 }
 
-int origem() {
-  return 0;
+int origem() { //talvez descartado
+  return 90;
 }
 
 void nulo() {
@@ -30,3 +41,16 @@ void nulo() {
   }
   circulo.write(origem());
 }
+
+void AB() {
+  for(int pos=circulo.read(); LDRA > LDRB; pos++){
+    circulo.write(pos);
+  }
+}
+  
+void BA() {
+  for(int pos=circulo.read(); LDRB > LDRA; pos--){
+    circulo.write(pos);
+  }
+}  
+  
