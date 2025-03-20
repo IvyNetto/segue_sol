@@ -15,16 +15,22 @@ void setup()
   circulo.write(origem());
   pinMode(LDRA, INPUT);
   pinMode(LDRB, INPUT);
+  delay(2000);
 }
 
 void loop()
 {
-  if (LDRA > LDRB) {
+  Serial.print("\nLDRA: "); //debug
+  Serial.print(analogRead(LDRA)); //debug
+  Serial.print("\nLDRB: "); //debug
+  Serial.print(analogRead(LDRB)); //debug
+  delay(2000); //debug
+  if (analogRead(LDRA) > analogRead(LDRB)) {
     AB();
-    
-  } else if (LDRB > LDRA){
+    delay(1000);
+  } else if (analogRead(LDRB) > analogRead(LDRA)){
     BA();
-    
+    delay(1000);
   }
   
 }
@@ -43,14 +49,24 @@ void nulo() {
 }
 
 void AB() {
-  for(int pos=circulo.read(); LDRA > LDRB; pos++){
-    circulo.write(pos);
+  for(int pos=circulo.read(); analogRead(LDRA) > analogRead(LDRB); pos++){
+    if(pos>180){
+      pos=180;
+    }else{
+      circulo.write(pos);
+      Serial.println(pos); //debug
+    }
   }
 }
   
 void BA() {
-  for(int pos=circulo.read(); LDRB > LDRA; pos--){
+  for(int pos=circulo.read(); analogRead(LDRB) > analogRead(LDRA); pos--){
+    if(pos<0){
+      pos=0;
+    }else{
     circulo.write(pos);
+    Serial.println(pos); //debug
+    }
   }
 }  
   
