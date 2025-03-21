@@ -1,72 +1,67 @@
-#include<Servo.h>
+#include <Servo.h>
 
-Servo parabola;
-Servo circulo;
-int LDRA = A0;
-int LDRB = A1;
-int entrada = 0; // variavel-> ta armazenando o valor do LDR1
+const int LDRBE = A0; //LDR Baixo Esquerda
+const int LDRBD = A1; //LDR Baixo Direita
+const int LDRCE = A2; //LDR Cima Esquerda
+const int LDRCD = A3; //LDR Cima Direita
+const int servoOrigem = 90;
 
-void setup()
-{
-  parabola.attach(9);
-  circulo.attach(7);
+Servo servoEixoY;
+Servo servoEixoX;
+
+void setup(){
+  servoEixoX.attach(7);
+  servoEixoY.attach(9);
+  pinMode(LDRBE, OUTPUT);
+  pinMode(LDRBD, OUTPUT);
+  pinMode(LDRCE, OUTPUT);
+  pinMode(LDRCD, OUTPUT);
   Serial.begin(9600);
-  parabola.write(origem());
-  circulo.write(origem());
-  pinMode(LDRA, INPUT);
-  pinMode(LDRB, INPUT);
-  delay(2000);
+  servoEixoY.write(servoOrigem);
+  servoEixoX.write(servoOrigem);
 }
 
-void loop()
-{
-  Serial.print("\nLDRA: "); //debug
-  Serial.print(analogRead(LDRA)); //debug
-  Serial.print("\nLDRB: "); //debug
-  Serial.print(analogRead(LDRB)); //debug
-  delay(2000); //debug
-  if (analogRead(LDRA) > analogRead(LDRB)) {
-    AB();
-    delay(1000);
-  } else if (analogRead(LDRB) > analogRead(LDRA)){
-    BA();
-    delay(1000);
+void loop(){
+  int luzBaixoEsq = analogRead(LDRBE);
+  int luzBaixoDir = analogRead(LDRBD);
+  int luzCimaEsq = analogRead(LDRCE);
+  int luzCimaDir = analogRead(LDRCD);
+  int posY = servoEixoY.read();
+  int posX = servoEixoX.read();
+  
+  Serial.print("Luz Baixo Esquerda: ");
+  Serial.println(luzBaixoEsq);
+  Serial.print("Luz Baixo Direita: ");
+  Serial.println(luzBaixoDir);
+  Serial.print("Luz Cima Esquerda: ");
+  Serial.println(luzCimaEsq);
+  Serial.print("Luz Cima Direita: ");
+  Serial.println(luzCimaDir);
+  
+  //Controle parábola
+  if((luzCimaEsq > luzCimaDir + 5) && posX<180){
+    posX++;
+	servoEixoX.write(posX);
+  	Serial.print("Posicao X: ");
+    Serial.println(posX);
+  }else if((luzCimaDir > luzCimaEsq + 5) && posX>0){
+    posX--;
+  	servoEixoX.write(posX);
+    Serial.print("Posicao X: ");
+    Serial.println(posX);
   }
   
-}
-
-int origem() { //talvez descartado
-  return 90;
-}
-
-void nulo() {
-  for(int pos=circulo.read(); pos<= 180; pos++){
-    circulo.write(pos);
-    Serial.println(pos);
-    delay(300);
+  //Controle circunferência
+  if((luzBaixoEsq > luzBaixoDir + 5) && posY<180){
+    posY++;
+	servoEixoY.write(posY);
+  	Serial.print("Posicao Y: ");
+    Serial.println(posY);
+  }else if((luzBaixoDir > luzBaixoEsq + 5) && posY>0){
+    posY--;
+  	servoEixoY.write(posY);
+    Serial.print("Posicao Y: ");
+    Serial.println(posY);
   }
-  circulo.write(origem());
+  delay(50);
 }
-
-void AB() {
-  for(int pos=circulo.read(); analogRead(LDRA) > analogRead(LDRB); pos++){
-    if(pos>180){
-      pos=180;
-    }else{
-      circulo.write(pos);
-      Serial.println(pos); //debug
-    }
-  }
-}
-  
-void BA() {
-  for(int pos=circulo.read(); analogRead(LDRB) > analogRead(LDRA); pos--){
-    if(pos<0){
-      pos=0;
-    }else{
-    circulo.write(pos);
-    Serial.println(pos); //debug
-    }
-  }
-}  
-  
