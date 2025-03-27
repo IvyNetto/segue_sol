@@ -12,10 +12,10 @@ Servo servoEixoX;
 void setup(){
   servoEixoX.attach(7);
   servoEixoY.attach(9);
-  pinMode(LDRBE, OUTPUT);
-  pinMode(LDRBD, OUTPUT);
-  pinMode(LDRCE, OUTPUT);
-  pinMode(LDRCD, OUTPUT);
+  pinMode(LDRBE, INPUT);
+  pinMode(LDRBD, INPUT);
+  pinMode(LDRCE, INPUT);
+  pinMode(LDRCD, INPUT);
   Serial.begin(9600);
   servoEixoY.write(servoOrigem);
   servoEixoX.write(servoOrigem);
@@ -39,12 +39,12 @@ void loop(){
   Serial.println(luzCimaDir);
   
   //Controle parábola
-  if((luzCimaEsq > luzCimaDir + 5) && posX<180){
+  if((luzCimaEsq > luzCimaDir) && posX<180){
     posX++;
-	servoEixoX.write(posX);
+	  servoEixoX.write(posX);
   	Serial.print("Posicao X: ");
     Serial.println(posX);
-  }else if((luzCimaDir > luzCimaEsq + 5) && posX>0){
+  }else if((luzCimaDir > luzCimaEsq) && posX>0){
     posX--;
   	servoEixoX.write(posX);
     Serial.print("Posicao X: ");
@@ -52,16 +52,16 @@ void loop(){
   }
   
   //Controle circunferência
-  if((luzBaixoEsq > luzBaixoDir + 5) && posY<180){
+  if((luzBaixoEsq > luzBaixoDir) && posY<180){
     posY++;
-	servoEixoY.write(posY);
+	  servoEixoY.write(posY);
   	Serial.print("Posicao Y: ");
     Serial.println(posY);
-  }else if((luzBaixoDir > luzBaixoEsq + 5) && posY>0){
+  }else if((luzBaixoDir > luzBaixoEsq) && posY>0){
     posY--;
   	servoEixoY.write(posY);
     Serial.print("Posicao Y: ");
     Serial.println(posY);
   }
-  delay(50);
+  delay(100);
 }
