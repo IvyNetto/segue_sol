@@ -1,16 +1,16 @@
 #include <Servo.h>
 
-const int LDRBE = A0; //LDR Baixo Esquerda
-const int LDRBD = A1; //LDR Baixo Direita
-const int LDRCE = A2; //LDR Cima Esquerda
-const int LDRCD = A3; //LDR Cima Direita
-const int servoOrigem = 90;
+const int LDRCE = A0; //LDR Cima Esquerda cinza D
+const int LDRCD = A1; //LDR Cima Direita branco C
+const int LDRBE = A2; //LDR Baixo Esquerda amarelo B
+const int LDRBD = A3; //LDR Baixo Direita roxo A
+const int servoOrigem = 0;
 
 Servo servoEixoY;
 Servo servoEixoX;
 
 void setup(){
-  servoEixoX.attach(7);
+  servoEixoX.attach(6);
   servoEixoY.attach(9);
   pinMode(LDRBE, INPUT);
   pinMode(LDRBD, INPUT);
@@ -39,12 +39,13 @@ void loop(){
   Serial.println(luzCimaDir);
   
   //Controle parábola
-  if((luzCimaEsq > luzCimaDir) && posX<180){
+  if(((luzCimaEsq + luzCimaDir) < (luzBaixoEsq + luzBaixoDir)) && posX >= 0){
     posX++;
 	  servoEixoX.write(posX);
   	Serial.print("Posicao X: ");
     Serial.println(posX);
-  }else if((luzCimaDir > luzCimaEsq) && posX>0){
+  }
+  else if(((luzCimaEsq + luzCimaDir) > (luzBaixoEsq + luzBaixoDir)) && posX <= 180){
     posX--;
   	servoEixoX.write(posX);
     Serial.print("Posicao X: ");
@@ -52,16 +53,25 @@ void loop(){
   }
   
   //Controle circunferência
-  if((luzBaixoEsq > luzBaixoDir) && posY<180){
-    posY++;
+  if(((luzBaixoEsq + luzCimaEsq) > (luzBaixoDir + luzCimaDir)) && posY >= 0){
+    posY--;
 	  servoEixoY.write(posY);
   	Serial.print("Posicao Y: ");
     Serial.println(posY);
-  }else if((luzBaixoDir > luzBaixoEsq) && posY>0){
-    posY--;
+  }
+  else if(((luzBaixoEsq + luzCimaEsq) < (luzBaixoDir + luzCimaDir)) && posY <= 180){
+    posY++;
   	servoEixoY.write(posY);
     Serial.print("Posicao Y: ");
     Serial.println(posY);
   }
-  delay(100);
+  if(posY >= 180 || posY <= 0){
+    servoEixoY.write(servoOrigem);
+    servoEixoX.write(servoOrigem);
+  }
+  if(posX >= 180 || posX <= 0){
+    servoEixoY.write(servoOrigem);
+    servoEixoX.write(servoOrigem);
+  }
+  delay(200);
 }
